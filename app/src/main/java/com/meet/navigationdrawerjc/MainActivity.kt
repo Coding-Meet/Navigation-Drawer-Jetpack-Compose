@@ -109,12 +109,21 @@ class MainActivity : ComponentActivity() {
                                 Toast.makeText(context,"Share Clicked",Toast.LENGTH_LONG).show()
                             }else{
                                 navController.navigate(currentNavigationItem.route){
-                                    navController.graph.startDestinationRoute?.let {
-                                        popUpTo(it){
+                                    // Pop up to the start destination of the graph to
+                                    // avoid building up a large stack of destinations
+                                    // on the back stack as users select items
+                                    navController.graph.startDestinationRoute?.let { startDestinationRoute ->
+                                        // Pop up to the start destination, clearing the back stack
+                                        popUpTo(startDestinationRoute) {
+                                            // Save the state of popped destinations
                                             saveState = true
                                         }
                                     }
+
+                                    // Configure navigation to avoid multiple instances of the same destination
                                     launchSingleTop = true
+
+                                    // Restore state when re-selecting a previously selected item
                                     restoreState = true
                                 }
                             }
